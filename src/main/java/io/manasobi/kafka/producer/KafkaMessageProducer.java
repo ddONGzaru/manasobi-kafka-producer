@@ -1,12 +1,9 @@
 package io.manasobi.kafka.producer;
 
-import io.manasobi.kafka.TestResultReporter;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -29,15 +26,12 @@ public class KafkaMessageProducer {
     @Value("${dataset.dir}")
     private String datasetDir;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     public void process(TextArea console, int page, int size, boolean enableTruncateTableJob) {
 
         console.clear();
 
         if (enableTruncateTableJob) {
-            TestResultReporter.truncateTables(jdbcTemplate.getDataSource());
+            //TestResultReporter.truncateTables(jdbcTemplate.getDataSource());
         }
 
         log.debug("===================================");
@@ -59,7 +53,7 @@ public class KafkaMessageProducer {
 
         for (int i = 0; i < producerThreadNums; i++) {
 
-            Runnable worker = new KafkaMessageWorker(topic, jdbcTemplate, page + i, size, page == 1, datasetDir, msgMaxRows);
+            Runnable worker = new KafkaMessageWorker(topic, page + i, size, page == 1, datasetDir, msgMaxRows);
 
             executor.execute(worker);
         }

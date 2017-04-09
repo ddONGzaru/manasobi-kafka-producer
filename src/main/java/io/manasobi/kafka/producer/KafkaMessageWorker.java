@@ -3,12 +3,11 @@ package io.manasobi.kafka.producer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 import com.google.common.collect.Lists;
-import io.manasobi.domain.ImpressionLog;
 import io.manasobi.kafka.DataSetReader;
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
+import tv.anypoint.domain.ImpressionLog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,15 +27,9 @@ public class KafkaMessageWorker implements Runnable {
 
     private Producer<String, byte[]> producer;
 
-    private JdbcTemplate jdbcTemplate;
-
     private int page;
 
     private int size;
-
-    private boolean enableCSVFileWriteJob = false;
-
-    private boolean enableDataSetWriteJob = false;
 
     private String datasetDir = "2015-10-28";
 
@@ -44,11 +37,9 @@ public class KafkaMessageWorker implements Runnable {
 
     NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
-    KafkaMessageWorker(String topic, JdbcTemplate jdbcTemplate, int page, int size,
-           boolean decreaseIndex, String datasetDir, int msgMaxRows) {
+    KafkaMessageWorker(String topic, int page, int size, boolean decreaseIndex, String datasetDir, int msgMaxRows) {
 
         this.topic = topic;
-        this.jdbcTemplate = jdbcTemplate;
 
         this.page = (decreaseIndex) ? --page * size : page * size;
         this.size = size;

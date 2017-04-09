@@ -48,11 +48,11 @@ sourceSets {
     test.output.resourcesDir = sourceSets.test.output.classesDir
 }
 
-/*configurations {
+configurations {
     compile.exclude module: 'slf4j-log4j12'
-    compile.exclude module: 'tomcat-jdbc'
-    compile.exclude module: 'persistence-api'
-}*/
+    //compile.exclude module: 'tomcat-jdbc'
+    //compile.exclude module: 'persistence-api'
+}
 
 javadoc {
     options.encoding = 'UTF-8'

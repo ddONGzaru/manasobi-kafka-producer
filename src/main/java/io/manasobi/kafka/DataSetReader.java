@@ -3,9 +3,10 @@ package io.manasobi.kafka;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.KryoObjectInput;
-import io.manasobi.domain.ImpressionLog;
 import io.manasobi.utils.FileUtils;
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
+import tv.anypoint.domain.ImpressionLog;
 
 import java.io.FileInputStream;
 import java.util.List;
@@ -31,9 +32,28 @@ public class DataSetReader {
 
         String fileName = datasetPrefix + "_impression-log_offset_" + String.format("%06d", page) + "_size_" + String.format("%06d", size) + ".jdo";
 
-        List<ImpressionLog> objList;
+        List<ImpressionLog> objList = null;
 
-        try(FileInputStream fis = new FileInputStream(fileDir + fileName);
+
+        try {
+            @Cleanup
+            FileInputStream fis = new FileInputStream(fileDir + fileName);
+
+            @Cleanup
+            ByteBufferInput input = new ByteBufferInput(fis);
+
+            Kryo kryo = new Kryo();
+
+            KryoObjectInput objectInput = new KryoObjectInput(kryo, input);
+
+            objList = (List<ImpressionLog>) objectInput.readObject();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
+
+
+        /*try(FileInputStream fis = new FileInputStream(fileDir + fileName);
             ByteBufferInput input = new ByteBufferInput(fis)) {
 
             Kryo kryo = new Kryo();
@@ -46,7 +66,7 @@ public class DataSetReader {
 
             log.error(e.getMessage());
             return null;
-        }
+        }*/
 
         return objList;
     }

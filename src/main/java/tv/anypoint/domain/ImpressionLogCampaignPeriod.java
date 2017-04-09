@@ -1,26 +1,22 @@
-package io.manasobi.domain;
+package tv.anypoint.domain;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by kwlee on 15. 9. 22.
  */
-@Entity
 @Data
-public class ImpressionLogRegion implements Serializable {
+public class ImpressionLogCampaignPeriod implements Serializable {
 
-    private static final long serialVersionUID = -770949202803046607L;
+    private static final long serialVersionUID = 8908531957797442591L;
 
-    @Id
-    @GeneratedValue
     private int id;
+
+    private long campaign;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date impressionTime;
@@ -31,17 +27,8 @@ public class ImpressionLogRegion implements Serializable {
 
     private int serviceOperator;
 
-    private int region1;
-
-    private int region2;
-
-    private int region3;
-
-    private int region4;
-
-    private int zipCode;
-
     private int inventory;
 
     private int deviceTotalImpression;
+
 }

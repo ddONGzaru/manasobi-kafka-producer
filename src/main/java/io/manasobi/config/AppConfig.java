@@ -1,6 +1,5 @@
 package io.manasobi.config;
 
-import com.zaxxer.hikari.HikariDataSource;
 import io.manasobi.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
@@ -13,10 +12,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.sql.DataSource;
-import java.util.Properties;
 
 /**
  * Created by twjang on 15. 9. 9.
@@ -28,7 +23,7 @@ public class AppConfig {
     Environment env;
 
 
-    @Bean
+    /*@Bean
     public DataSource dataSource() {
 
         Properties props = yamlProps().getObject();
@@ -50,7 +45,7 @@ public class AppConfig {
         jdbcTemplate.setDataSource(dataSource());
 
         return jdbcTemplate;
-    }
+    }*/
 
     @Bean
     public YamlPropertiesFactoryBean yamlProps() {

@@ -1,20 +1,16 @@
-package io.manasobi.domain;
+package tv.anypoint.domain;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity
 @Data
 public class ImpressionLog implements Serializable {
 
     private static final long serialVersionUID = -2994623061748645868L;
 
-    @Id
     private String id;
 
     private long campaign;
