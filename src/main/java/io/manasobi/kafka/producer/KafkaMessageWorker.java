@@ -4,9 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 import com.google.common.collect.Lists;
 import io.manasobi.kafka.DataSetReader;
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import tv.anypoint.domain.ImpressionLog;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +25,7 @@ public class KafkaMessageWorker implements Runnable {
 
     private String topic;
 
-    private Producer<String, byte[]> producer;
+    private KafkaProducer<String, ImpressionLog> producer;
 
     private int page;
 
@@ -58,8 +58,8 @@ public class KafkaMessageWorker implements Runnable {
         List<ImpressionLog> messageList = reader.read(datasetDir, page, size);
 
 
-        List<List<KeyedMessage<String, byte[]>>> sendMsgList = Lists.newArrayList();
-        List<KeyedMessage<String, byte[]>> sendMsgUnitList = Lists.newArrayList();
+        List<List<ProducerRecord<String, ImpressionLog>>> sendMsgList = Lists.newArrayList();
+        List<ProducerRecord<String, ImpressionLog>> sendMsgUnitList = Lists.newArrayList();
 
         int index = 0;
 
@@ -67,7 +67,7 @@ public class KafkaMessageWorker implements Runnable {
 
             index++;
 
-            sendMsgUnitList.add(new KeyedMessage<String, byte[]>(topic, generateKey(), toByteArray(message)));
+            sendMsgUnitList.add(new ProducerRecord<String, ImpressionLog>(topic, generateKey(), message));
 
             if (index % msgMaxRows == 0) {
 
@@ -82,7 +82,9 @@ public class KafkaMessageWorker implements Runnable {
             }
         }
 
-        sendMsgList.forEach(msgList -> producer.send(msgList));
+        sendMsgList.forEach(msgList ->
+            msgList.forEach(r -> producer.send(r))
+        );
 
         log.debug("Dataset 레코드 총계: {}", numberFormat.format(messageList.size()));
 

@@ -1,9 +1,11 @@
 package io.manasobi.kafka.producer;
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import tv.anypoint.domain.ImpressionLog;
+import tv.anypoint.domain.ImpressionLogSerializer;
 
 import java.util.Properties;
 
@@ -13,15 +15,14 @@ import java.util.Properties;
 @Component
 public class ProducerFactory {
 
-    private static Producer<String, byte[]> producer;
+    private static KafkaProducer<String, ImpressionLog> producer;
 
-    public static Producer<String, byte[]> getInstance() {
+    public static KafkaProducer<String, ImpressionLog> getInstance() {
 
         if (producer == null) {
-            return buildProducer();
-        } else {
-            return producer;
+            producer = buildProducer();
         }
+        return producer;
     }
 
 
@@ -34,17 +35,18 @@ public class ProducerFactory {
         System.out.println("broker list: " + metadataBrokerList);
     }
 
-    private static Producer<String, byte[]> buildProducer() {
+    private static KafkaProducer<String, ImpressionLog> buildProducer() {
 
         Properties props = new Properties();
-
-        props.put("metadata.broker.list", metadataBrokerList);
+        props.put("bootstrap.servers", metadataBrokerList);
+        //props.put("metadata.broker.list", metadataBrokerList);
         props.put("partitioner.class", RoundRobinPartitioner.class.getName());
         props.put("compression.codec", "2");
-        props.put("key.serializer.class", "kafka.serializer.StringEncoder");
+        props.put("key.serializer", StringSerializer.class.getName());
+        props.put("value.serializer", ImpressionLogSerializer.class.getName());
 
-        ProducerConfig producerConfig = new ProducerConfig(props);
+        //ProducerConfig producerConfig = new ProducerConfig(props);
 
-        return new Producer<>(producerConfig);
+        return new KafkaProducer<>(props);
     }
 }

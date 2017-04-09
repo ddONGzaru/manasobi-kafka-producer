@@ -10,7 +10,7 @@ dataset.dir: "2015-10-30"
 
 #kafka
 kafka:
-  metadata.broker.list: localhost:9092,localhost:9093
+  metadata.broker.list: 192.168.33.0:32768,192.168.33.0:32769,192.168.33.0:32770
   zookeeper:
     url: localhost:2181
     session.timeout.ms: 4000
