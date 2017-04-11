@@ -7,6 +7,7 @@ import io.manasobi.kafka.DataSetReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import tv.anypoint.domain.ImpressionLog;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +16,7 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,7 +27,7 @@ public class KafkaMessageWorker implements Runnable {
 
     private String topic;
 
-    private KafkaProducer<String, ImpressionLog> producer;
+    private KafkaProducer<String, String> producer;
 
     private int page;
 
@@ -58,8 +60,8 @@ public class KafkaMessageWorker implements Runnable {
         List<ImpressionLog> messageList = reader.read(datasetDir, page, size);
 
 
-        List<List<ProducerRecord<String, ImpressionLog>>> sendMsgList = Lists.newArrayList();
-        List<ProducerRecord<String, ImpressionLog>> sendMsgUnitList = Lists.newArrayList();
+        List<List<ProducerRecord<String, String>>> sendMsgList = Lists.newArrayList();
+        List<ProducerRecord<String, String>> sendMsgUnitList = Lists.newArrayList();
 
         int index = 0;
 
@@ -67,7 +69,7 @@ public class KafkaMessageWorker implements Runnable {
 
             index++;
 
-            sendMsgUnitList.add(new ProducerRecord<String, ImpressionLog>(topic, generateKey(), message));
+            sendMsgUnitList.add(new ProducerRecord<String, String>(topic, generateKey(), "test"));
 
             if (index % msgMaxRows == 0) {
 
@@ -82,13 +84,26 @@ public class KafkaMessageWorker implements Runnable {
             }
         }
 
-        sendMsgList.forEach(msgList ->
-            msgList.forEach(r -> producer.send(r))
+        sendMsgList.forEach(msgList -> {
+                    Future<RecordMetadata> future = producer.send(msgList.get(0));
+
+                    if (future.isDone()) {
+                        producer.close();
+                    }
+                }
+
+
+
+                //msgList.forEach(r -> producer.send(r))
         );
+
+        /*sendMsgList.forEach(msgList ->
+                msgList.forEach(r -> producer.send(r))
+        );*/
 
         log.debug("Dataset 레코드 총계: {}", numberFormat.format(messageList.size()));
 
-        producer.close();
+        //producer.close();
 
     }
 

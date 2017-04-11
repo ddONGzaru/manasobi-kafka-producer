@@ -15,9 +15,9 @@ import java.util.Properties;
 @Component
 public class ProducerFactory {
 
-    private static KafkaProducer<String, ImpressionLog> producer;
+    private static KafkaProducer<String, String> producer;
 
-    public static KafkaProducer<String, ImpressionLog> getInstance() {
+    public static KafkaProducer<String, String> getInstance() {
 
         if (producer == null) {
             producer = buildProducer();
@@ -35,7 +35,7 @@ public class ProducerFactory {
         System.out.println("broker list: " + metadataBrokerList);
     }
 
-    private static KafkaProducer<String, ImpressionLog> buildProducer() {
+    private static KafkaProducer<String, String> buildProducer() {
 
         Properties props = new Properties();
         props.put("bootstrap.servers", metadataBrokerList);
@@ -43,7 +43,7 @@ public class ProducerFactory {
         props.put("partitioner.class", RoundRobinPartitioner.class.getName());
         props.put("compression.codec", "2");
         props.put("key.serializer", StringSerializer.class.getName());
-        props.put("value.serializer", ImpressionLogSerializer.class.getName());
+        props.put("value.serializer", StringSerializer.class.getName());
 
         //ProducerConfig producerConfig = new ProducerConfig(props);
 

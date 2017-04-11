@@ -10,15 +10,15 @@ dataset.dir: "2015-10-30"
 
 #kafka
 kafka:
-  metadata.broker.list: 192.168.33.0:32768,192.168.33.0:32769,192.168.33.0:32770
+  metadata.broker.list: 192.168.32.20:32768,192.168.32.20:32769,192.168.32.20:32770
   zookeeper:
-    url: localhost:2181
+    url: 192.168.32.20:2181
     session.timeout.ms: 4000
     sync.timeout.ms: 200
   auto.commit.interval.ms: 1000
   group.id: anypoint.tv.group
   topic:
-      log.collector: log.collector.test.0005
+      log.collector: log.collector.test.0001
       log.collector.thread.nums: 4
   msg.max.rows: 5000
 
